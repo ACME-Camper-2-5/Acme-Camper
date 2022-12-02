@@ -19,7 +19,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def create_ref_code():
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 
 def products(request):
@@ -324,10 +324,11 @@ class PaymentView(View):
 
                 order.ordered = True
                 order.payment = payment
-                order.ref_code = create_ref_code()
+                localrefCode = create_ref_code()
+                order.ref_code = localrefCode
                 order.save()
 
-                messages.success(self.request, "Your order was successful!")
+                messages.success(self.request, f"Your order was successful! - Order ID: {localrefCode}")
                 return redirect("/")
 
             except stripe.error.CardError as e:

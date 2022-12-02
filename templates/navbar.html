@@ -93,6 +93,12 @@
 
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
+          <li class="nav-item">
+            <a href="{% url 'core:privacy' %}" class="nav-link waves-effect">
+              <span class="badge red z-depth-1 mr-1"></span>
+              <span class="clearfix d-none d-sm-inline-block"> Privacy policy </span>
+            </a>
+          </li>
           {% if request.user.is_authenticated %}
           <li class="nav-item">
             <a href="{% url 'core:order-summary' %}" class="nav-link waves-effect">

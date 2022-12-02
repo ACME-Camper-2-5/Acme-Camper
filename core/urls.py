@@ -3,6 +3,7 @@ from .views import (
     ItemDetailView,
     CheckoutView,
     HomeView,
+    PrivacyPolicyView,
     OrderSummaryView,
     SearchResult,
     add_to_cart,
@@ -17,6 +18,7 @@ app_name = 'core'
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
+    path('privacy/', PrivacyPolicyView.as_view(), name='privacy'),
     path('search/', SearchResult.as_view(), name='search'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('order-summary/', OrderSummaryView.as_view(), name='order-summary'),

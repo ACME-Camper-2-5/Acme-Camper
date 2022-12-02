@@ -373,6 +373,12 @@ class HomeView(ListView):
     template_name = "home.html"
 
 
+class PrivacyPolicyView(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "privacy_policy.html"
+
+
 class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:

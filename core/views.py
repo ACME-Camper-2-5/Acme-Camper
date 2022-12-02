@@ -1,6 +1,7 @@
 import random
 import string
 import stripe
+import json
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -10,10 +11,11 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
-from django.db.models import Q  # New
+from django.db.models import Q
+from django.http import HttPResponse
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, OrderUpdate
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -29,15 +31,28 @@ def products(request):
     return render(request, "products.html", context)
 
 
-# class TrackingView(View):
-#     template_name = 'order_tracking.html'
-
+# Order Tracking
 
 def tracking(request):
+    if request.method == "POST":
+        ref_code = request.POST.get('ref_code', '')
+        email = request.POST.get('email', '')
+        try:
+            order = Order.objects.filter(ref_code=ref_code, email=email)
+            if len(order) > 0:
+                update = OrderUpdate.objects.filter(ref_code=ref_code)
+                updates = []
+                for item in update:
+                    updates.append(
+                        {'text': item.update_desc, 'time': item.timestamp})
+                    response = json.dumps(updates)
+                    return HttPResponse(response)
+            else:
+                pass
     return render(request, 'order_tracking.html')
 
-# Search Function
 
+# Search Function
 
 class SearchResult(ListView):
     model = Item

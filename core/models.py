@@ -162,12 +162,12 @@ class Order(models.Model):
     def express_delivery(self):
         self.totalOrder = self.get_total() + 6
 
-# For the tracking process
 
+# For the tracking process
 
 class OrderUpdate(models.Model):
     update_id = models.AutoField(primary_key=True)
-    order_id = models.IntegerField(default="")
+    ref_code = models.CharField(max_length=20, blank=True, null=True)
     update_desc = models.CharField(max_length=5000)
     timestamp = models.DateField(auto_now_add=True)
 

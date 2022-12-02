@@ -12,7 +12,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
 from django.db.models import Q
-from django.http import HttPResponse
+from django.http import HttpResponse
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, OrderUpdate
@@ -21,7 +21,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def create_ref_code():
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 
 def products(request):
@@ -38,6 +38,7 @@ def tracking(request):
         ref_code = request.POST.get('ref_code', '')
         email = request.POST.get('email', '')
         try:
+            print("try")
             order = Order.objects.filter(ref_code=ref_code, email=email)
             if len(order) > 0:
                 update = OrderUpdate.objects.filter(ref_code=ref_code)
@@ -45,10 +46,12 @@ def tracking(request):
                 for item in update:
                     updates.append(
                         {'text': item.update_desc, 'time': item.timestamp})
-                    response = json.dumps(updates)
-                    return HttPResponse(response)
+                    response = json.dumps(updates, default=str)
+                    return HttpResponse(response)
             else:
-                pass
+                return HttpResponse('Please enter a valid ref code and email address.')
+        finally:
+            print("finally")
     return render(request, 'order_tracking.html')
 
 
@@ -76,6 +79,9 @@ class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
+            update = OrderUpdate(ref_code=order.ref_code,
+                                 update_desc="The order has been placed")
+            update.save()
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -339,10 +345,12 @@ class PaymentView(View):
 
                 order.ordered = True
                 order.payment = payment
-                order.ref_code = create_ref_code()
+                localrefCode = create_ref_code()
+                order.ref_code = localrefCode
                 order.save()
 
-                messages.success(self.request, "Your order was successful!")
+                messages.success(
+                    self.request, f"Your order was successful! - Order ID: {localrefCode}")
                 return redirect("/")
 
             except stripe.error.CardError as e:

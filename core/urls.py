@@ -12,7 +12,6 @@ from .views import (
     AddCouponView,
     RequestRefundView,
     tracking
-    # TrackingView
 )
 
 app_name = 'core'
@@ -20,7 +19,6 @@ app_name = 'core'
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('search/', SearchResult.as_view(), name='search'),
-    # path('order-tracking/', TrackingView.as_view(), name='order-tracking'),
     path('order-tracking/', tracking, name='order-tracking'),
     path('checkout/', CheckoutView.as_view(), name='checkout'),
     path('order-summary/', OrderSummaryView.as_view(), name='order-summary'),

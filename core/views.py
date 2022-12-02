@@ -28,6 +28,14 @@ def products(request):
     }
     return render(request, "products.html", context)
 
+
+# class TrackingView(View):
+#     template_name = 'order_tracking.html'
+
+
+def tracking(request):
+    return render(request, 'order_tracking.html')
+
 # Search Function
 
 

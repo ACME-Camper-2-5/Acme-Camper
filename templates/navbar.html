@@ -94,6 +94,13 @@
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
           {% if request.user.is_authenticated %}
+          
+          <form class="form-inline" action="/order-tracking" method="get">
+            <li class="nav-item">
+              <button class="btn-default nav-link waves-effect" type="submit">Track my Order</button>
+            </li>
+          </form>
+          
           <li class="nav-item">
             <a href="{% url 'core:order-summary' %}" class="nav-link waves-effect">
               <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count }} </span>
@@ -106,7 +113,14 @@
               <span class="clearfix d-none d-sm-inline-block"> Logout </span>
             </a>
           </li>
+          
           {% else %}
+          <form class="form-inline" action="/order-tracking" method="get">
+            <li class="nav-item">
+              <button class="btn-default nav-link waves-effect" type="submit">Track my Order</button>
+            </li>
+          </form>
+        
           <li class="nav-item">
             <a class="btn-default nav-link waves-effect login" href="{% url 'account_login' %}">
               <span class="clearfix d-none d-sm-inline-block"> Login </span>

@@ -15,7 +15,6 @@
 {% extends 'base.html' %}
 {% block content %}
 
-
 <div class="container tracking">
     <div class="col my-4">
         <h2> Enter Your Order ID and Email address to track your order </h2>
@@ -37,9 +36,22 @@
         <h2>Your Order Status :</h2>
         <div class="my-4">
             <ul class="list-group" id="items">
+                {% if order_list %}
+                    {% for order in order_list %}
+                        <div style="background-color: blue; width: 200px;" id="order_info">
+                            {{order.ref_code}}
+                        </div>
+                        <div style="background-color: blue; width: 200px;" id="order_info">
+                            {{order.totalOrder}}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="background-color: red; width: 200px;" id="order_info">
+                        Nothing
+                    </div>
+                {% endif %}
             </ul>
         </div>
-       
     </div>
 </div>
 
@@ -84,6 +96,19 @@ $('#trackingForm').submit(function(event) {
 </script>
 {% endblock %}
 {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- <div class="container">
     <article class="card">

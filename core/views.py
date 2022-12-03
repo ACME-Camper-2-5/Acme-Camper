@@ -34,24 +34,24 @@ def products(request):
 # Order Tracking
 
 def tracking(request):
+
     if request.method == "POST":
         ref_code = request.POST.get('ref_code', '')
         email = request.POST.get('email', '')
+
         try:
-            print("try")
-            order = Order.objects.filter(ref_code=ref_code, email=email)
-            if len(order) > 0:
-                update = OrderUpdate.objects.filter(ref_code=ref_code)
-                updates = []
-                for item in update:
-                    updates.append(
-                        {'text': item.update_desc, 'time': item.timestamp})
-                    response = json.dumps(updates, default=str)
-                    return HttpResponse(response)
-            else:
-                return HttpResponse('Please enter a valid ref code and email address.')
-        finally:
-            print("finally")
+            print('ref_code:', ref_code)
+            print('email:', email)
+            order = Order.objects.filter(
+                ref_code=ref_code)
+            print('Order:', order)
+            context = {
+                "order_list": order
+            }
+            return render(request, 'order_tracking.html', context)
+        except ObjectDoesNotExist:
+            messages.info(self.request, "Order not found")
+            return null
     return render(request, 'order_tracking.html')
 
 
@@ -184,7 +184,7 @@ class CheckoutView(View):
                     order.save()
 
                 elif use_default_billing:
-                    print("Using the defualt billing address")
+                    print("Using the default billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='B',

@@ -15,7 +15,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile, OrderUpdate
+from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -37,14 +37,10 @@ def tracking(request):
 
     if request.method == "POST":
         ref_code = request.POST.get('ref_code', '')
-        email = request.POST.get('email', '')
 
         try:
-            print('ref_code:', ref_code)
-            print('email:', email)
             order = Order.objects.filter(
                 ref_code=ref_code)
-            print('Order:', order)
             context = {
                 "order_list": order
             }

@@ -1,7 +1,7 @@
 import random
 import string
-
 import stripe
+import json
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -11,6 +11,8 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
+from django.db.models import Q
+from django.http import HttpResponse
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
@@ -19,7 +21,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def create_ref_code():
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 
 def products(request):
@@ -27,6 +29,93 @@ def products(request):
         'items': Item.objects.all()
     }
     return render(request, "products.html", context)
+
+
+# Order Tracking
+
+def tracking(request):
+
+    if request.method == "POST":
+        ref_code = request.POST.get('ref_code', '')
+
+        try:
+
+            order = Order.objects.filter(
+                ref_code=ref_code)
+
+            if order is not None:
+                context = {
+                    "active_order": 1,
+                    "order_list": order
+                }
+                return render(request, 'order_tracking.html', context)
+            elif order is None:
+                context = {
+                    "active_order": 0,
+                    "order_list": order,
+                }
+                return render(request, 'order_tracking.html', context)
+        except ObjectDoesNotExist:
+            HttpResponse("Please enter a valid reference code.")
+    return render(request, 'order_tracking.html')
+
+
+# Search Function
+
+class SearchResult(ListView):
+    model = Item
+    template_name = 'search.html'
+
+    def get_queryset(self):
+        query = self.request.GET.get("query")
+        # new
+        return Item.objects.filter(Q(title__icontains=query) | Q(description__icontains=query) | Q(category__icontains=query))
+
+
+class CategoryAll(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "home.html"
+
+
+class CategoryFU(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='FU')
+
+
+class CategoryVE(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='VE')
+
+
+class CategoryCL(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='CL')
+
+
+class CategoryOD(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='OD')
+
+
+class CategoryBP(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='BP')
 
 
 def is_valid_form(values):
@@ -41,6 +130,9 @@ class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
+            update = OrderUpdate(ref_code=order.ref_code,
+                                 update_desc="The order has been placed")
+            update.save()
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -143,7 +235,7 @@ class CheckoutView(View):
                     order.save()
 
                 elif use_default_billing:
-                    print("Using the defualt billing address")
+                    print("Using the default billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='B',
@@ -191,6 +283,13 @@ class CheckoutView(View):
                         messages.info(
                             self.request, "Please fill in the required billing address fields")
 
+                delivery_option = form.cleaned_data.get(
+                    'delivery_option')
+                order.delivery_option = delivery_option
+                order.save()
+                order.get_total()
+                print(order.delivery_option)
+
                 payment_option = form.cleaned_data.get('payment_option')
 
                 if payment_option == 'S':
@@ -213,7 +312,7 @@ class PaymentView(View):
             context = {
                 'order': order,
                 'DISPLAY_COUPON_FORM': False,
-                'STRIPE_PUBLIC_KEY' : settings.STRIPE_PUBLIC_KEY
+                'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
             }
             userprofile = self.request.user.userprofile
             if userprofile.one_click_purchasing:
@@ -290,14 +389,19 @@ class PaymentView(View):
                 order_items = order.items.all()
                 order_items.update(ordered=True)
                 for item in order_items:
+                    '''product = item.item
+                    product.stock = product.stock - item.quantity
+                    product.save()'''
                     item.save()
 
                 order.ordered = True
                 order.payment = payment
-                order.ref_code = create_ref_code()
+                localrefCode = create_ref_code()
+                order.ref_code = localrefCode
                 order.save()
 
-                messages.success(self.request, "Your order was successful!")
+                messages.success(
+                    self.request, f"Your order was successful! - Order ID: {localrefCode}")
                 return redirect("/")
 
             except stripe.error.CardError as e:
@@ -351,6 +455,16 @@ class HomeView(ListView):
     template_name = "home.html"
 
 
+class TermsView(ListView):
+    model = Item
+    template_name = "terms.html"
+    
+class PrivacyPolicyView(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "privacy_policy.html"
+
+
 class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
@@ -383,9 +497,14 @@ def add_to_cart(request, slug):
         # check if the order item is in the order
         if order.items.filter(item__slug=item.slug).exists():
             order_item.quantity += 1
-            order_item.save()
-            messages.info(request, "This item quantity was updated.")
-            return redirect("core:order-summary")
+            if order_item.quantity > item.stock:
+                popUp = "Not enough stock for item: " + item.title
+                messages.error(request, popUp)
+                return redirect("core:order-summary")
+            else:
+                order_item.save()
+                messages.info(request, "This item quantity was updated.")
+                return redirect("core:order-summary")
         else:
             order.items.add(order_item)
             messages.info(request, "This item was added to your cart.")

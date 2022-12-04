@@ -7,9 +7,11 @@ from django_countries.fields import CountryField
 
 
 CATEGORY_CHOICES = (
-    ('S', 'Shirt'),
-    ('SW', 'Sport wear'),
-    ('OW', 'Outwear')
+    ('FU', 'Furniture'),
+    ('VE', 'Vehicles'),
+    ('CL', 'Clothes'),
+    ('OD', 'Outdoor'),
+    ('BP', 'Backpacks')
 )
 
 LABEL_CHOICES = (
@@ -23,11 +25,20 @@ ADDRESS_CHOICES = (
     ('S', 'Shipping'),
 )
 
+SHIPMENT_STATUS_CODES = (
+    ('0', 'Inducted'),
+    ('1', 'Order received'),
+    ('2', 'Order started'),
+    ('3', 'Order completed'),
+    ('4', 'Shipped')
+)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
+    stripe_customer_id = models.CharField(
+        max_length=50, blank=True, null=True)
     one_click_purchasing = models.BooleanField(default=False)
 
     def __str__(self):
@@ -37,12 +48,14 @@ class UserProfile(models.Model):
 class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
+    description = models.CharField(max_length=1000)
     discount_price = models.FloatField(blank=True, null=True)
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=2)
     label = models.CharField(choices=LABEL_CHOICES, max_length=1)
     slug = models.SlugField()
     description = models.TextField()
-    image = models.ImageField()
+    stock = models.PositiveIntegerField(default=0)
+    image = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.title
@@ -87,6 +100,10 @@ class OrderItem(models.Model):
             return self.get_total_discount_item_price()
         return self.get_total_item_price()
 
+    def validate_stock(self):
+        if self.quantity > self.item.stock:
+            raise("Not enough stock for this item: ", self.item.title)
+
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -108,6 +125,10 @@ class Order(models.Model):
     received = models.BooleanField(default=False)
     refund_requested = models.BooleanField(default=False)
     refund_granted = models.BooleanField(default=False)
+    delivery_option = models.CharField(max_length=20, null=True)
+    email = models.CharField(max_length=50, null=True)
+    deleteTag = models.BooleanField(default=False)
+    totalOrder = models.FloatField(null=True)
 
     '''
     1. Item added to cart
@@ -127,9 +148,34 @@ class Order(models.Model):
         total = 0
         for order_item in self.items.all():
             total += order_item.get_final_price()
-        if self.coupon:
-            total -= self.coupon.amount
+        if total < 50.0:
+            if self.delivery_option == 'ST':
+                total += 3
+            if self.delivery_option == 'EX':
+                total += 6
+
+        self.totalOrder = total
+        self.save()
         return total
+
+    def standard_delivery(self):
+        self.totalOrder = self.get_total() + 3
+
+    def express_delivery(self):
+        self.totalOrder = self.get_total() + 6
+
+
+# For the tracking process
+
+# class OrderUpdate(models.Model):
+    # update_id = models.AutoField(primary_key=True)
+    # ref_code = models.CharField(max_length=20, blank=True, null=True)
+    # update_desc = models.CharField(max_length=5000)
+    # timestamp = models.DateField(auto_now_add=True)
+
+
+def __str__(self):
+    return self.update_desc[0:7] + "..."
 
 
 class Address(models.Model):

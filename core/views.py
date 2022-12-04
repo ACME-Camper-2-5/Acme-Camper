@@ -373,6 +373,11 @@ class HomeView(ListView):
     template_name = "home.html"
 
 
+class TermsView(ListView):
+    model = Item
+    template_name = "terms.html"
+
+
 class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:

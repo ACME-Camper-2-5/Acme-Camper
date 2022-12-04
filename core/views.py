@@ -419,6 +419,10 @@ class HomeView(ListView):
     template_name = "home.html"
 
 
+class TermsView(ListView):
+    model = Item
+    template_name = "terms.html"
+    
 class PrivacyPolicyView(ListView):
     model = Item
     paginate_by = 10

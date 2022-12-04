@@ -39,15 +39,24 @@ def tracking(request):
         ref_code = request.POST.get('ref_code', '')
 
         try:
+
             order = Order.objects.filter(
                 ref_code=ref_code)
-            context = {
-                "order_list": order
-            }
-            return render(request, 'order_tracking.html', context)
+
+            if order is not None:
+                context = {
+                    "active_order": 1,
+                    "order_list": order
+                }
+                return render(request, 'order_tracking.html', context)
+            elif order is None:
+                context = {
+                    "active_order": 0,
+                    "order_list": order,
+                }
+                return render(request, 'order_tracking.html', context)
         except ObjectDoesNotExist:
-            messages.info(self.request, "Order not found")
-            return null
+            HttpResponse("Please enter a valid reference code.")
     return render(request, 'order_tracking.html')
 
 

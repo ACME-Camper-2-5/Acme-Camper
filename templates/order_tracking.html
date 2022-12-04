@@ -30,11 +30,19 @@
     margin-top: 50px!important;
 }
 
+.container {
+    /* padding: 0px 0px 0px 0px!important; */
+}
+
 .container.tracking {
     margin-top: 60px!important;
     margin-bottom: 60px!important;
+    padding: 0px 0px 0px 0px!important;
 }
 
+.container.box{
+    padding: 15px 0px 0px 0px!important;
+}
 .col.tracking {
     text-align: center;
 }
@@ -42,11 +50,8 @@
 .btn.btn-primary {
     background: #b3b3b3!important;
     color: #fff!important;
-    margin-top: 19px!important;
-    padding-left: 1.5rem!important;
-    padding-right: 1.5rem!important;
-    padding-top: 9.5px!important;
-    padding-bottom: 9.5px!important;
+    margin: 19px 0px 0px 6px!important;
+    padding: 9.5px 3rem 9.5px 3rem!important;
     border-radius: 0.375rem;
 }
 
@@ -60,35 +65,35 @@
 </html>
 
 {% extends 'base.html' %}
+
 {% block content %}
 
 <div class="container tracking">
     <div class="col my-4">
-        <h2> Please enter Your Reference Code to track your order </h2>
+        <h3> Please enter your reference code to track your order </h3>
 
-           <form method="post" action="" id="trackingForm">{% csrf_token %}
+        <form method="post" action="" id="trackingForm">{% csrf_token %}
             <div class="form-group">
                 <div class="input-group-append">
-                    <input type="text" class="form-control" id="ref_code" name="ref_code" placeholder="Ref Code">
+                    <input type="text" class="form-control" id="ref_code" name="ref_code" placeholder="Reference Code">
                     <span class="input-group-btn">
                         <button type=submit class="btn btn-primary" type="button">Enter</button>
-                      </span>
+                    </span>
                 </div>
             </div>
     </div>
 
-    {% if order_list %}
+{% if active_order == 1 %}
+
+{% if order_list %}
 
     {% for order in order_list %}
-
         <div class="col my-4">
             <h2>Status of Order {{order.ref_code}}</h2>
 
-            <div class="container">
+            <div class="container box">
                 <article class="card">
-                    <!-- <header class="card-header"> My Orders / Tracking </header> -->
                     <div class="card-body">
-                        <!-- <h6>Order ID: {{order.ref_code}}</h6> -->
                         <article class="card">
                             <div class="card-body row">
                                 <div class="col tracking"> <strong>Ordering Date:</strong> <br>{{order.ordered_date}}</div>
@@ -131,16 +136,24 @@
                     </div>
                 </article>
             </div>
-                
+</div>                      
             {% endfor %}            
     
-    {% else %}
+    {% else %}  
+        
+    <div class="col my-4">
+        <h3>This is no oder for this reference code. Please try again with a vaild input.</h3>
+
+</div>
 
     {% endif %}
 
-                </ul>
-            </div>
-        </div>
-</div>
+{% else %}
 
-{% endblock content %}
+
+
+{% endif %}
+
+</div> 
+
+{% endblock %}

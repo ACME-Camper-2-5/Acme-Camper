@@ -9,6 +9,7 @@ from .views import (
     CategoryCL,
     CheckoutView,
     HomeView,
+    PrivacyPolicyView,
     OrderSummaryView,
     SearchResult,
     add_to_cart,
@@ -23,6 +24,7 @@ app_name = 'core'
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
+    path('privacy/', PrivacyPolicyView.as_view(), name='privacy'),
     path('search/', SearchResult.as_view(), name='search'),
     path('all/', CategoryAll.as_view(), name='all'),
     path('FU/', CategoryFU.as_view(), name='FU'),

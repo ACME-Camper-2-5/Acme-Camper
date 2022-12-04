@@ -41,6 +41,52 @@ class SearchResult(ListView):
         return Item.objects.filter(Q(title__icontains=query) | Q(description__icontains=query) | Q(category__icontains=query))
 
 
+class CategoryAll(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "home.html"
+
+
+class CategoryFU(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='FU')
+
+
+class CategoryVE(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='VE')
+
+
+class CategoryCL(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='CL')
+
+
+class CategoryOD(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='OD')
+
+
+class CategoryBP(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='BP')
+
+
 def is_valid_form(values):
     valid = True
     for field in values:
@@ -376,6 +422,11 @@ class HomeView(ListView):
 class TermsView(ListView):
     model = Item
     template_name = "terms.html"
+    
+class PrivacyPolicyView(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "privacy_policy.html"
 
 
 class OrderSummaryView(LoginRequiredMixin, View):

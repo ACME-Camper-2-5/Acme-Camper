@@ -18,7 +18,8 @@ from .views import (
     remove_single_item_from_cart,
     PaymentView,
     AddCouponView,
-    RequestRefundView
+    RequestRefundView,
+    tracking
 )
 
 app_name = 'core'
@@ -27,6 +28,7 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('privacy/', PrivacyPolicyView.as_view(), name='privacy'),
     path('search/', SearchResult.as_view(), name='search'),
+    path('order-tracking/', tracking, name='order-tracking'),
     path('all/', CategoryAll.as_view(), name='all'),
     path('FU/', CategoryFU.as_view(), name='FU'),
     path('VE/', CategoryVE.as_view(), name='VE'),

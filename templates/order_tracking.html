@@ -30,12 +30,8 @@
     margin-top: 50px!important;
 }
 
-.container {
-    /* padding: 0px 0px 0px 0px!important; */
-}
-
 .container.tracking {
-    margin-top: 60px!important;
+    margin-top: 2em!important;
     margin-bottom: 60px!important;
     padding: 0px 0px 0px 0px!important;
 }
@@ -118,7 +114,7 @@
                             <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text"> Delivered</span> </div>
                         </div>
 
-                        {% elif order_item %}
+                        {% elif order.ordered == 1 %}
 
                         <div class="track">
                             <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text"> Order confirmed</span> </div>

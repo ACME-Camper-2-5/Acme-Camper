@@ -4110,7 +4110,7 @@ a.btn:not([href]):not([tabindex]):hover {
   background-color: transparent !important;
   color: #fff !important; }
   .btn-outline-white:hover, .btn-outline-white:focus, .btn-outline-white:active, .btn-outline-white:active:focus, .btn-outline-white.active {
-    border-color: #fff !important;
+    border-color: none ! important;
     background-color: transparent !important;
     color: #fff !important; }
   .btn-outline-white:not([disabled]):not(.disabled):active, .btn-outline-white:not([disabled]):not(.disabled).active,
@@ -4118,7 +4118,7 @@ a.btn:not([href]):not([tabindex]):hover {
     -webkit-box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
     box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
     background-color: transparent !important;
-    border-color: #fff !important; }
+    border-color: none !important; }
   .btn-outline-white:not([disabled]):not(.disabled):active:focus, .btn-outline-white:not([disabled]):not(.disabled).active:focus,
   .show > .btn-outline-white.dropdown-toggle:focus {
     -webkit-box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);

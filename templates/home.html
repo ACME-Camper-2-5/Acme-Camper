@@ -9,7 +9,7 @@
   box-shadow: none!important;
   border-radius: 0.375rem;
   padding: 0.5rem 1rem 0.5rem 1rem!important;
-  margin: 0 0.5rem 0 0 !important;
+  margin: 0 0 0 0 !important;
   border: none!important;
   font-weight: 300;
 }
@@ -19,8 +19,12 @@
   color: #fff!important;
   box-shadow: none!important;
   padding: 0.5rem 1rem 0.5rem 1rem!important;
-  margin: 0 0.5rem 0 0 !important;
+  margin: 0 0 0 0 !important;
   border: none!important
+}
+
+.page-link.active {
+  background: #b3b3b3!important;
 }
 
 
@@ -192,7 +196,7 @@
         {% endif %}
 
         <li class="page-item active">
-          <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}
+          <a class="page-link active" href="?page={{ page_obj.number }}">{{ page_obj.number }}
             <span class="sr-only">(current)</span>
           </a>
         </li>

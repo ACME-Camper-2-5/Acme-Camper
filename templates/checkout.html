@@ -1,10 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+/* Buttons */
+
+.btn.btn-default {
+  background: #b3b3b3!important;
+  color: #fff!important;
+  margin-right: 0.375rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 0.375rem;
+}
+
+
+
+</style>
+</head>
+</html>
+
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 <main>
   <div class="container wow fadeIn">
-    <h2 class="my-5 h2 text-center">Checkout form</h2>
+    <h2 class="my-5 h2 text-center">Checkout</h2>
     <div class="row">
       <div class="col-md-8 mb-4">
         <div class="card">
@@ -149,7 +171,7 @@
             </div>
 
             <hr class="mb-4">
-            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+            <button class="btn btn-default btn-lg btn-block" type="submit">Continue to checkout</button>
 
           </form>
 

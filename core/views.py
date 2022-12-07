@@ -130,9 +130,6 @@ class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
-            update = OrderUpdate(ref_code=order.ref_code,
-                                 update_desc="The order has been placed")
-            update.save()
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -458,7 +455,8 @@ class HomeView(ListView):
 class TermsView(ListView):
     model = Item
     template_name = "terms.html"
-    
+
+
 class PrivacyPolicyView(ListView):
     model = Item
     paginate_by = 10

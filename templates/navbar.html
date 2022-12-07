@@ -11,6 +11,10 @@
   margin-top: 2.5em!important;
 }
 
+.badge.red {
+  background: red!important;
+}
+
 /* Buttons */
 
 .btn-default.nav-link.waves-effect {
@@ -84,13 +88,13 @@
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
           <li class="nav-item">
-            <a href="{% url 'core:privacy' %}" class="nav-link waves-effect">
+            <a href="{% url 'core:privacy' %}" class="nav-link">
               <span class="badge red z-depth-1 mr-1"></span>
               <span class="clearfix d-none d-sm-inline-block"> Privacy policy </span>
             </a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'core:terms' %}" class="nav-link waves-effect">
+            <a href="{% url 'core:terms' %}" class="nav-link">
               <i class="fas fa-handshake"></i>
               <span class="clearfix d-none d-sm-inline-block"> Terms of Service </span>
             </a>
@@ -99,7 +103,7 @@
           
           
           <li class="nav-item">
-            <a href="{% url 'core:order-summary' %}" class="nav-link waves-effect">
+            <a href="{% url 'core:order-summary' %}" class="nav-link">
               <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count }} </span>
               <i class="fas fa-shopping-cart"></i>
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>

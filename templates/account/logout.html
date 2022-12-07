@@ -1,3 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+/* Sign Out block */
+.row.wow.fadeIn.animated {
+  margin-top: 2em!important;
+}
+
+/* Buttons */
+
+.btn.btn-default {
+  background: #b3b3b3!important;
+  color: #fff!important;
+  margin-right: 0.375rem;
+  margin-left: 0!important;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 0.375rem;
+}
+
+
+
+</style>
+</head>
+</html>
+
 {% extends "account/base.html" %}
 {% load i18n %}
 
@@ -16,7 +44,7 @@
               {% if redirect_field_value %}
               <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
               {% endif %}
-              <button class='btn btn-primary' type="submit">{% trans 'Sign Out' %}</button>
+              <button class='btn btn-default' type="submit">{% trans 'Sign Out' %}</button>
             </form>
           </div>
         </div>

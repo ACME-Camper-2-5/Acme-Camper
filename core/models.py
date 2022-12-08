@@ -71,6 +71,7 @@ class OrderItem(models.Model):
     ordered = models.BooleanField(default=False)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
+    anonymous = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.quantity} of {self.item.title}"
@@ -97,6 +98,7 @@ class OrderItem(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
+    anonymous = models.BooleanField(default=False)
     ref_code = models.CharField(max_length=20, blank=True, null=True)
     items = models.ManyToManyField(OrderItem)
     start_date = models.DateTimeField(auto_now_add=True)
@@ -131,7 +133,10 @@ class Order(models.Model):
     '''
 
     def __str__(self):
-        return self.user.username
+        if self.user is not None:
+            return self.user.username
+        else:
+            return "Anonymous"
 
     def get_total(self):
         total = 0

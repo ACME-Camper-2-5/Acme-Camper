@@ -1,6 +1,7 @@
 import random
 import string
 import stripe
+import json
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -10,7 +11,8 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
-from django.db.models import Q  # New
+from django.db.models import Q
+from django.http import HttpResponse
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
@@ -19,7 +21,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def create_ref_code():
-    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
 
 def products(request):
@@ -28,8 +30,37 @@ def products(request):
     }
     return render(request, "products.html", context)
 
-# Search Function
 
+# Order Tracking
+
+def tracking(request):
+
+    if request.method == "POST":
+        ref_code = request.POST.get('ref_code', '')
+
+        try:
+
+            order = Order.objects.filter(
+                ref_code=ref_code)
+
+            if order is not None:
+                context = {
+                    "active_order": 1,
+                    "order_list": order
+                }
+                return render(request, 'order_tracking.html', context)
+            elif order is None:
+                context = {
+                    "active_order": 0,
+                    "order_list": order,
+                }
+                return render(request, 'order_tracking.html', context)
+        except ObjectDoesNotExist:
+            HttpResponse("Please enter a valid reference code.")
+    return render(request, 'order_tracking.html')
+
+
+# Search Function
 
 class SearchResult(ListView):
     model = Item
@@ -39,6 +70,52 @@ class SearchResult(ListView):
         query = self.request.GET.get("query")
         # new
         return Item.objects.filter(Q(title__icontains=query) | Q(description__icontains=query) | Q(category__icontains=query))
+
+
+class CategoryAll(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "home.html"
+
+
+class CategoryFU(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='FU')
+
+
+class CategoryVE(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='VE')
+
+
+class CategoryCL(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='CL')
+
+
+class CategoryOD(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='OD')
+
+
+class CategoryBP(ListView):
+    model = Item
+    template_name = 'home.html'
+
+    def get_queryset(self):
+        return Item.objects.filter(category='BP')
 
 
 def is_valid_form(values):
@@ -57,6 +134,7 @@ class CheckoutView(View):
                     user=self.request.user, ordered=False)
             else:
                 order = Order.objects.get(anonymous=True, ordered=False)
+            update.save()
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -332,10 +410,12 @@ class PaymentView(View):
 
                 order.ordered = True
                 order.payment = payment
-                order.ref_code = create_ref_code()
+                localrefCode = create_ref_code()
+                order.ref_code = localrefCode
                 order.save()
 
-                messages.success(self.request, "Your order was successful!")
+                messages.success(
+                    self.request, f"Your order was successful! - Order ID: {localrefCode}")
                 return redirect("/")
 
             except stripe.error.CardError as e:
@@ -389,7 +469,18 @@ class HomeView(ListView):
     template_name = "home.html"
 
 
-class OrderSummaryView(View):
+
+class TermsView(ListView):
+    model = Item
+    template_name = "terms.html"
+    
+class PrivacyPolicyView(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "privacy_policy.html"
+
+
+class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
             if (self.request.user.is_authenticated):

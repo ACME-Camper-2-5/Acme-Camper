@@ -7,9 +7,11 @@ from django_countries.fields import CountryField
 
 
 CATEGORY_CHOICES = (
-    ('A', 'Class A'),
-    ('B', 'Class B'),
-    ('C', 'Class C')
+    ('FU', 'Furniture'),
+    ('VE', 'Vehicles'),
+    ('CL', 'Clothes'),
+    ('OD', 'Outdoor'),
+    ('BP', 'Backpacks')
 )
 
 LABEL_CHOICES = (
@@ -23,11 +25,20 @@ ADDRESS_CHOICES = (
     ('S', 'Shipping'),
 )
 
+SHIPMENT_STATUS_CODES = (
+    ('0', 'Inducted'),
+    ('1', 'Order received'),
+    ('2', 'Order started'),
+    ('3', 'Order completed'),
+    ('4', 'Shipped')
+)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    stripe_customer_id = models.CharField(max_length=50, blank=True, null=True)
+    stripe_customer_id = models.CharField(
+        max_length=50, blank=True, null=True)
     one_click_purchasing = models.BooleanField(default=False)
 
     def __str__(self):
@@ -44,7 +55,7 @@ class Item(models.Model):
     slug = models.SlugField()
     description = models.TextField()
     stock = models.PositiveIntegerField(default=0)
-    image = models.ImageField()
+    image = models.CharField(max_length=1000)
 
     def __str__(self):
         return self.title
@@ -157,6 +168,19 @@ class Order(models.Model):
 
     def express_delivery(self):
         self.totalOrder = self.get_total() + 6
+
+
+# For the tracking process
+
+# class OrderUpdate(models.Model):
+    # update_id = models.AutoField(primary_key=True)
+    # ref_code = models.CharField(max_length=20, blank=True, null=True)
+    # update_desc = models.CharField(max_length=5000)
+    # timestamp = models.DateField(auto_now_add=True)
+
+
+def __str__(self):
+    return self.update_desc[0:7] + "..."
 
 
 class Address(models.Model):

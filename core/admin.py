@@ -54,12 +54,19 @@ class AddressAdmin(admin.ModelAdmin):
     list_filter = ['default', 'address_type', 'country']
     search_fields = ['user', 'street_address', 'apartment_address', 'zip']
 
+class RefundAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'accepted',
+        'email'
+    ]
+
 
 admin.site.register(Item)
 admin.site.register(OrderItem)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Payment)
 admin.site.register(Coupon)
-admin.site.register(Refund)
+admin.site.register(Refund, RefundAdmin)
 admin.site.register(Address, AddressAdmin)
 admin.site.register(UserProfile)

@@ -91,6 +91,14 @@
 
             <hr>
 
+            <h3>Contact details</h3>
+
+            <div class="md-form mb-5">
+              <input type='text' placeholder='e-mail@example.com' id='email' name='email_address'
+                class='form-control' required />
+              <label for="email_address" class="">E-mail</label>
+            </div>
+
             <h3>Billing address</h3>
 
             <div class='hideable_billing_form'>
@@ -157,8 +165,7 @@
 
             <div class="d-block my-3">
               <div style="padding-bottom: 20px;">
-                <strong class="text-muted"> No se aplicarán los gastos de envío al proceder al pago para pedidos de
-                  importe igual o superior a 50$. </strong>
+                <strong class="text-muted"> Delivery payments won't be applied for orders that exceed 50$. </strong>
               </div>
 
               {% for value, name in form.fields.delivery_option.choices %}

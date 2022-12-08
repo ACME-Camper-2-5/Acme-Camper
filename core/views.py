@@ -129,7 +129,12 @@ def is_valid_form(values):
 class CheckoutView(View):
     def get(self, *args, **kwargs):
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            if (self.request.user.is_authenticated):
+                order = Order.objects.get(
+                    user=self.request.user, ordered=False)
+            else:
+                order = Order.objects.get(anonymous=True, ordered=False)
+            update.save()
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -138,23 +143,24 @@ class CheckoutView(View):
                 'DISPLAY_COUPON_FORM': True
             }
 
-            shipping_address_qs = Address.objects.filter(
-                user=self.request.user,
-                address_type='S',
-                default=True
-            )
-            if shipping_address_qs.exists():
-                context.update(
-                    {'default_shipping_address': shipping_address_qs[0]})
+            if (self.request.user.is_authenticated):
+                shipping_address_qs = Address.objects.filter(
+                    user=self.request.user,
+                    address_type='S',
+                    default=True
+                )
+                if shipping_address_qs.exists():
+                    context.update(
+                        {'default_shipping_address': shipping_address_qs[0]})
 
-            billing_address_qs = Address.objects.filter(
-                user=self.request.user,
-                address_type='B',
-                default=True
-            )
-            if billing_address_qs.exists():
-                context.update(
-                    {'default_billing_address': billing_address_qs[0]})
+                billing_address_qs = Address.objects.filter(
+                    user=self.request.user,
+                    address_type='B',
+                    default=True
+                )
+                if billing_address_qs.exists():
+                    context.update(
+                        {'default_billing_address': billing_address_qs[0]})
             return render(self.request, "checkout.html", context)
         except ObjectDoesNotExist:
             messages.info(self.request, "You do not have an active order")
@@ -163,12 +169,16 @@ class CheckoutView(View):
     def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            if (self.request.user.is_authenticated):
+                order = Order.objects.get(
+                    user=self.request.user, ordered=False)
+            else:
+                order = Order.objects.get(anonymous=True, ordered=False)
             if form.is_valid():
 
                 use_default_shipping = form.cleaned_data.get(
                     'use_default_shipping')
-                if use_default_shipping:
+                if self.request.user.is_authenticated and use_default_shipping:
                     print("Using the defualt shipping address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
@@ -231,8 +241,8 @@ class CheckoutView(View):
                     order.billing_address = billing_address
                     order.save()
 
-                elif use_default_billing:
-                    print("Using the default billing address")
+                elif self.request.user.is_authenticated and use_default_billing:
+                    print("Using the defualt billing address")
                     address_qs = Address.objects.filter(
                         user=self.request.user,
                         address_type='B',
@@ -304,27 +314,31 @@ class CheckoutView(View):
 
 class PaymentView(View):
     def get(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
+        if (self.request.user.is_authenticated):
+            order = Order.objects.get(user=self.request.user, ordered=False)
+        else:
+            order = Order.objects.get(anonymous=True, ordered=False)
         if order.billing_address:
             context = {
                 'order': order,
                 'DISPLAY_COUPON_FORM': False,
                 'STRIPE_PUBLIC_KEY': settings.STRIPE_PUBLIC_KEY
             }
-            userprofile = self.request.user.userprofile
-            if userprofile.one_click_purchasing:
-                # fetch the users card list
-                cards = stripe.Customer.list_sources(
-                    userprofile.stripe_customer_id,
-                    limit=3,
-                    object='card'
-                )
-                card_list = cards['data']
-                if len(card_list) > 0:
-                    # update the context with the default card
-                    context.update({
-                        'card': card_list[0]
-                    })
+            if (self.request.user.is_authenticated):
+                userprofile = self.request.user.userprofile
+                if userprofile.one_click_purchasing:
+                    # fetch the users card list
+                    cards = stripe.Customer.list_sources(
+                        userprofile.stripe_customer_id,
+                        limit=3,
+                        object='card'
+                    )
+                    card_list = cards['data']
+                    if len(card_list) > 0:
+                        # update the context with the default card
+                        context.update({
+                            'card': card_list[0]
+                        })
             return render(self.request, "payment.html", context)
         else:
             messages.warning(
@@ -332,7 +346,10 @@ class PaymentView(View):
             return redirect("core:checkout")
 
     def post(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
+        if (self.request.user.is_authenticated):
+            order = Order.objects.get(user=self.request.user, ordered=False)
+        else:
+            order = Order.objects.get(anonymous=True, ordered=False)
         form = PaymentForm(self.request.POST)
         userprofile = UserProfile.objects.get(user=self.request.user)
         if form.is_valid():
@@ -452,6 +469,7 @@ class HomeView(ListView):
     template_name = "home.html"
 
 
+
 class TermsView(ListView):
     model = Item
     template_name = "terms.html"
@@ -466,7 +484,11 @@ class PrivacyPolicyView(ListView):
 class OrderSummaryView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            if (self.request.user.is_authenticated):
+                order = Order.objects.get(
+                    user=self.request.user, ordered=False)
+            else:
+                order = Order.objects.get(anonymous=True, ordered=False)
             context = {
                 'object': order
             }
@@ -481,15 +503,22 @@ class ItemDetailView(DetailView):
     template_name = "product.html"
 
 
-@login_required
 def add_to_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
-    order_item, created = OrderItem.objects.get_or_create(
-        item=item,
-        user=request.user,
-        ordered=False
-    )
-    order_qs = Order.objects.filter(user=request.user, ordered=False)
+    if (request.user.is_authenticated):
+        order_item, created = OrderItem.objects.get_or_create(
+            item=item,
+            user=request.user,
+            ordered=False
+        )
+        order_qs = Order.objects.filter(user=request.user, ordered=False)
+    else:
+        order_item, created = OrderItem.objects.get_or_create(
+            item=item,
+            ordered=False,
+            anonymous=True
+        )
+        order_qs = Order.objects.filter(anonymous=True, ordered=False)
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order
@@ -509,29 +538,45 @@ def add_to_cart(request, slug):
             return redirect("core:order-summary")
     else:
         ordered_date = timezone.now()
-        order = Order.objects.create(
-            user=request.user, ordered_date=ordered_date)
+        if (request.user.is_authenticated):
+            order = Order.objects.create(
+                user=request.user, ordered_date=ordered_date)
+        else:
+            order = Order.objects.create(
+                anonymous=True, ordered_date=ordered_date)
         order.items.add(order_item)
         messages.info(request, "This item was added to your cart.")
         return redirect("core:order-summary")
 
 
-@login_required
 def remove_from_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
-    order_qs = Order.objects.filter(
-        user=request.user,
-        ordered=False
-    )
+    if (request.user.is_authenticated):
+        order_qs = Order.objects.filter(
+            user=request.user,
+            ordered=False
+        )
+    else:
+        order_qs = Order.objects.filter(
+            anonymous=True,
+            ordered=False
+        )
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order
         if order.items.filter(item__slug=item.slug).exists():
-            order_item = OrderItem.objects.filter(
-                item=item,
-                user=request.user,
-                ordered=False
-            )[0]
+            if (request.user.is_authenticated):
+                order_item = OrderItem.objects.filter(
+                    item=item,
+                    user=request.user,
+                    ordered=False
+                )[0]
+            else:
+                order_item = OrderItem.objects.filter(
+                    item=item,
+                    anonymous=True,
+                    ordered=False
+                )[0]
             order.items.remove(order_item)
             order_item.delete()
             messages.info(request, "This item was removed from your cart.")
@@ -544,7 +589,6 @@ def remove_from_cart(request, slug):
         return redirect("core:product", slug=slug)
 
 
-@login_required
 def remove_single_item_from_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
     order_qs = Order.objects.filter(
@@ -555,11 +599,18 @@ def remove_single_item_from_cart(request, slug):
         order = order_qs[0]
         # check if the order item is in the order
         if order.items.filter(item__slug=item.slug).exists():
-            order_item = OrderItem.objects.filter(
-                item=item,
-                user=request.user,
-                ordered=False
-            )[0]
+            if (request.user.is_authenticated):
+                order_item = OrderItem.objects.filter(
+                    item=item,
+                    user=request.user,
+                    ordered=False
+                )[0]
+            else:
+                order_item = OrderItem.objects.filter(
+                    item=item,
+                    anonymous=True,
+                    ordered=False
+                )[0]
             if order_item.quantity > 1:
                 order_item.quantity -= 1
                 order_item.save()

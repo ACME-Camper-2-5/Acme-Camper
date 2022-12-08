@@ -1,3 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+/* Buttons */
+
+.btn.btn-default {
+  background: #b3b3b3!important;
+  color: #fff!important;
+  margin-right: 0.375rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 0.375rem;
+}
+
+.btn.btn-default.continue {
+  background: #0071bc!important;
+  color: #fff!important;
+  margin-right: 0.375rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-radius: 0.375rem;
+}
+
+
+</style>
+</head>
+</html>
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -56,9 +86,9 @@
                         <td colspan='5'>Your cart is empty</td>
                     </tr>
                     <tr>
-                        <td colspan="5">
-                            <a class='btn btn-primary float-right' href='/'>Continue shopping</a>
-                        </td>
+                        <!-- <td colspan="5">
+                            <a class='btn btn-default continue float-right' href='/'>Continue shopping</a>
+                        </td> -->
                     </tr>
                     {% endfor %}
                     {% if object.coupon %}
@@ -74,8 +104,8 @@
                     </tr>
                     <tr>
                         <td colspan="5">
-                            <a class='btn btn-warning float-right ml-2' href='/checkout/'>Proceed to checkout</a>
-                            <a class='btn btn-primary float-right' href='/'>Continue shopping</a>
+                            <a class='btn btn-default float-right ml-2' href='/checkout/'>Proceed to checkout</a>
+                            <a class='btn btn-default continue float-right ' href='/'>Continue shopping</a>
                         </td>
                     </tr>
                     {% endif %}

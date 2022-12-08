@@ -1,3 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+/* Buttons */
+
+#stripeBtn {
+  background: #b3b3b3!important;
+}
+
+
+
+</style>
+</head>
+</html>
+
 {% extends "base.html" %}
 
 {% block extra_head %}
@@ -127,7 +144,7 @@ button:hover {
                   {% csrf_token %}
                   <input type="hidden" name="use_default" value="true">
                   <div class="stripe-form-row">
-                    <button id="stripeBtn">Submit Payment</button>
+                    <button class="btn btn-default" id="stripeBtn">Submit Payment</button>
                   </div>
                   <div id="card-errors" role="alert"></div>
               </form>

@@ -1,3 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+
+.btn-default.nav-link.category {
+  background: #0071bc!important;
+  box-shadow: none!important;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem 0.5rem 1rem!important;
+  margin: 0 0 0 0 !important;
+  border: none!important;
+  font-weight: 300;
+}
+
+.btn-default.nav-link.category:hover {
+  background: #095c97!important;
+  color: #fff!important;
+  box-shadow: none!important;
+  padding: 0.5rem 1rem 0.5rem 1rem!important;
+  margin: 0 0 0 0 !important;
+  border: none!important
+}
+
+.page-link.active {
+  background: #b3b3b3!important;
+}
+
+
+</style>
+</head>
+</html>
+
 {% extends "base.html" %}
 
 <script>
@@ -33,44 +67,42 @@
         <ul class="navbar-nav mr-auto">
           <form class="form-inline" action="/all" method="get">
             <li class="nav-item">
-              <button class="btn-default nav-link waves-effect" type="submit">All
+              <button class="btn-default nav-link category" type="submit">All
               </button>
             </li>
           </form>
 
           <form class="form-inline" action="/FU" method="get">
             <li class="nav-item">
-              <button class="btn-default nav-link waves-effect" type="submit">Furniture
+              <button class="btn-default nav-link category" type="submit">Furniture
               </button>
             </li>
           </form>
 
           <form class="form-inline" action="/VE" method="get">
             <li class="nav-item">
-              <button class="btn-default nav-link waves-effect" type="submit">Vehicles
+              <button class="btn-default nav-link category" type="submit">Vehicles
               </button>
             </li>
           </form>
 
           <form class="form-inline" action="/CL" method="get">
             <li class="nav-item">
-              <a class="nav-link" href="#">Class C</a>
-            </li> 
-              <button class="btn-default nav-link waves-effect" type="submit">Clothes
+              <button class="btn-default nav-link category" type="submit">Clothes
               </button>
             </li>
           </form>
 
           <form class="form-inline" action="/OD" method="get">
             <li class="nav-item">
-              <button class="btn-default nav-link waves-effect" type="submit">Outdoor
+              <button class="btn-default nav-link category" type="submit">Outdoor
               </button>
             </li>
           </form>
 
           <form class="form-inline" action="/BP" method="get">
             <li class="nav-item">
-              <button class="btn-default nav-link waves-effect" type="submit">Backpacks
+              <button class="btn-default nav-link category" type="submit">Backpacks
               </button>
             </li>
           </form>
@@ -164,7 +196,7 @@
         {% endif %}
 
         <li class="page-item active">
-          <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}
+          <a class="page-link active" href="?page={{ page_obj.number }}">{{ page_obj.number }}
             <span class="sr-only">(current)</span>
           </a>
         </li>

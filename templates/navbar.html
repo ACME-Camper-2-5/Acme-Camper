@@ -8,35 +8,17 @@
 .mdb-color.lighten-3 {
   background-color: #0071bc!important;
   border-radius: 6px;
-  margin-top: 6em!important;
+  margin-top: 2.5em!important;
 }
 
-/* Active Categorie */
-.navbar.navbar-dark .breadcrumb .nav-item.active>.nav-link, .navbar.navbar-dark .navbar-nav .nav-item.active>.nav-link {
-    background-color: #095c97;
-    border-radius: 0.375rem;
-}
-
-.navbar.navbar-dark .navbar-nav .nav-item .nav-link {
-  border-radius: 0.375em;
-}
-
-.mdb-color.lighten-3 {
-  background-color: #0071bc!important;
-  margin-top: 4em!important;
-  border-radius: 0.375em;
-}
-
-.nav-item.active {
-  background-color: #095c97!important;
-  color: #095c97!important;
-  border-radius: 0.25em;
+.badge.red {
+  background: red!important;
 }
 
 /* Buttons */
 
 .btn-default.nav-link.waves-effect {
-  background: #0071bc!important;
+  background: #b3b3b3!important;
   color: #fff!important;
   margin-left: 1rem;
   padding-left: 1.5rem;
@@ -47,14 +29,10 @@
   font-weight: 300!important;
 }
 
-.btn-default.nav-link.waves-effect.login {
+.btn-default.nav-link.waves-effect.grey {
   background: #b3b3b3!important;
-  color: #fff!important;
-  margin-left: 0.375rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  border-radius: 0.375rem;
 }
+
 
 
 </style>
@@ -71,7 +49,7 @@
     <a class="navbar-brand" href="/">
       <img
         src="https://lh5.googleusercontent.com/CIV0Fatj9C1pS0hPmvOIhAPwcXUYAYf5xwKacJpzUd5sWM1kIcKmrYN3lg51WVW0OCA=w2400"
-        width="75" height="75">
+        width="60" height="60">
       <strong class="blue-text"></strong>
     </a>
 
@@ -86,7 +64,7 @@
 
       <!-- Left -->
       <ul class="navbar-nav mr-auto">
-        {% comment %} <li class="nav-item active">
+        <!-- <li class="nav-item active">
           <a class="nav-link waves-effect" href="/">Home
             <span class="sr-only">(current)</span>
           </a>
@@ -95,30 +73,36 @@
           <a class="nav-link waves-effect" href="/checkout">
             Checkout</a>
             
-        </li> {% endcomment %}
-        <li class="nav-item">
+        </li>  -->
+        <!-- <li class="nav-item">
           <a href="{% url 'core:terms' %}" class="nav-link waves-effect">
             <i class="fas fa-handshake"></i>
             <span class="clearfix d-none d-sm-inline-block"> Terms of Service </span>
           </a>
-        </li>
+        </li> -->
       </ul>
       
-          </li> {% endcomment %}
+          </li> 
         </ul>
 
         <!-- Right -->
         <ul class="navbar-nav nav-flex-icons">
           <li class="nav-item">
-            <a href="{% url 'core:privacy' %}" class="nav-link waves-effect">
+            <a href="{% url 'core:privacy' %}" class="nav-link">
               <span class="badge red z-depth-1 mr-1"></span>
               <span class="clearfix d-none d-sm-inline-block"> Privacy policy </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'core:terms' %}" class="nav-link">
+              <i class="fas fa-handshake"></i>
+              <span class="clearfix d-none d-sm-inline-block"> Terms of Service </span>
             </a>
           </li>
           {% if request.user.is_authenticated %}
           
           <li class="nav-item">
-            <a href="{% url 'core:order-summary' %}" class="nav-link waves-effect">
+            <a href="{% url 'core:order-summary' %}" class="nav-link">
               <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count }} </span>
               <i class="fas fa-shopping-cart"></i>
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>
@@ -126,7 +110,9 @@
           </li>
           <form class="form-inline" action="/order-tracking" method="get">
             <li class="nav-item">
-              <button class="btn-default nav-link waves-effect" type="submit">Track my Order</button>
+              <a class="btn-default nav-link waves-effect grey" href="{% url 'core:order-tracking' %}">
+                <span class="clearfix d-none d-sm-inline-block"> Track my Order </span>
+              </a>
             </li>
           </form>
           
@@ -138,9 +124,17 @@
           </li>
           
           {% else %}
+          
+          <form class="form-inline" action="/order-tracking" method="get">
+            <li class="nav-item">
+              <a class="btn-default nav-link waves-effect grey" href="{% url 'core:order-tracking' %}">
+                <span class="clearfix d-none d-sm-inline-block"> Track my Order </span>
+              </a>
+            </li>
+          </form>
         
           <li class="nav-item">
-            <a class="btn-default nav-link waves-effect login" href="{% url 'account_login' %}">
+            <a class="btn-default nav-link waves-effect grey" href="{% url 'account_login' %}">
               <span class="clearfix d-none d-sm-inline-block"> Login </span>
             </a>
           </li>

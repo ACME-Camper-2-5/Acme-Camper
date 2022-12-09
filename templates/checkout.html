@@ -1,23 +1,21 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<style>
+  <style>
+    /* Buttons */
 
-/* Buttons */
-
-.btn.btn-default {
-  background: #b3b3b3!important;
-  color: #fff!important;
-  margin-right: 0.375rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  border-radius: 0.375rem;
-}
-
-
-
-</style>
+    .btn.btn-default {
+      background: #b3b3b3 !important;
+      color: #fff !important;
+      margin-right: 0.375rem;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      border-radius: 0.375rem;
+    }
+  </style>
 </head>
+
 </html>
 
 {% extends "base.html" %}
@@ -84,8 +82,8 @@
             {% if default_shipping_address %}
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" name="use_default_shipping" id="use_default_shipping">
-              <label class="custom-control-label" for="use_default_shipping">Use default shipping address: {{
-                default_shipping_address.street_address|truncatechars:10 }}</label>
+              <label class="custom-control-label" for="use_default_shipping">
+                Use default shipping address: {{ default_shipping_address.street_address|truncatechars:10 }}</label>
             </div>
             {% endif %}
 
@@ -94,8 +92,8 @@
             <h3>Contact details</h3>
 
             <div class="md-form mb-5">
-              <input type='text' placeholder='e-mail@example.com' id='email' name='email_address'
-                class='form-control' required />
+              <input type='text' placeholder='e-mail@example.com' id='email' name='email_address' class='form-control'
+                required />
               <label for="email_address" class="">E-mail</label>
             </div>
 
@@ -143,8 +141,8 @@
             {% if default_billing_address %}
             <div class="custom-control custom-checkbox">
               <input type="checkbox" class="custom-control-input" name="use_default_billing" id="use_default_billing">
-              <label class="custom-control-label" for="use_default_billing">Use default billing address: {{
-                default_billing_address.street_address|truncatechars:10 }}</label>
+              <label class="custom-control-label" for="use_default_billing">
+                Use default billing address: {{ default_billing_address.street_address|truncatechars:10 }}</label>
             </div>
             {% endif %}
             <hr>

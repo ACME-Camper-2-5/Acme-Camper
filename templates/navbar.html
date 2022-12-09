@@ -60,86 +60,7 @@
 
       <!-- Left -->
       <ul class="navbar-nav mr-auto">
-        <!-- <li class="nav-item active">
-          <a class="nav-link waves-effect" href="/">Home
-            <span class="sr-only">(current)</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link waves-effect" href="/checkout">
-            Checkout</a>
-            
-        </li>  -->
-        <!-- <li class="nav-item">
-          <a href="{% url 'core:terms' %}" class="nav-link waves-effect">
-            <i class="fas fa-handshake"></i>
-            <span class="clearfix d-none d-sm-inline-block"> Terms of Service </span>
-          </a>
-        </li> -->
       </ul>
-
-        <!-- Right -->
-        <ul class="navbar-nav nav-flex-icons">
-          <li class="nav-item">
-            <a href="{% url 'core:privacy' %}" class="nav-link">
-              <span class="badge red z-depth-1 mr-1"></span>
-              <span class="clearfix d-none d-sm-inline-block"> Privacy policy </span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'core:terms' %}" class="nav-link">
-              <i class="fas fa-handshake"></i>
-              <span class="clearfix d-none d-sm-inline-block"> Terms of Service </span>
-            </a>
-          </li>
-          {% if request.user.is_authenticated %}
-          
-          <li class="nav-item">
-            <a href="{% url 'core:order-summary' %}" class="nav-link">
-              <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count }} </span>
-              <i class="fas fa-shopping-cart"></i>
-              <span class="clearfix d-none d-sm-inline-block"> Cart </span>
-            </a>
-          </li>
-          <form class="form-inline" action="/order-tracking" method="get">
-            <li class="nav-item">
-              <a class="btn-default nav-link waves-effect grey" href="{% url 'core:order-tracking' %}">
-                <span class="clearfix d-none d-sm-inline-block"> Track my Order </span>
-              </a>
-            </li>
-          </form>
-          {% endif %}
-          
-          {% if request.user.is_authenticated %}
-          <li class="nav-item">
-            <a class="btn-default nav-link waves-effect" href="{% url 'account_logout' %}">
-              <span class="clearfix d-none d-sm-inline-block"> Logout </span>
-            </a>
-          </li>
-          
-          {% else %}
-          
-          <form class="form-inline" action="/order-tracking" method="get">
-            <li class="nav-item">
-              <a class="btn-default nav-link waves-effect grey" href="{% url 'core:order-tracking' %}">
-                <span class="clearfix d-none d-sm-inline-block"> Track my Order </span>
-              </a>
-            </li>
-          </form>
-        
-          <li class="nav-item">
-            <a class="btn-default nav-link waves-effect grey" href="{% url 'account_login' %}">
-              <span class="clearfix d-none d-sm-inline-block"> Login </span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="btn-default nav-link waves-effect" href="{% url 'account_signup' %}">
-              <span class="clearfix d-none d-sm-inline-block"> Signup </span>
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
 
       <!-- Right -->
       <ul class="navbar-nav nav-flex-icons">
@@ -172,6 +93,7 @@
           </li>
         </form>
         {% endif %}
+
         {% if request.user.is_authenticated %}
         <li class="nav-item">
           <a class="btn-default nav-link waves-effect" href="{% url 'account_logout' %}">
@@ -202,6 +124,7 @@
         {% endif %}
       </ul>
     </div>
+  </div>
 
   </div>
 

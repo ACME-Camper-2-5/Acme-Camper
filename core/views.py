@@ -134,7 +134,7 @@ class CheckoutView(View):
                     user=self.request.user, ordered=False)
             else:
                 order = Order.objects.get(anonymous=True, ordered=False)
-            update.save()
+            # update.save()
             form = CheckoutForm()
             context = {
                 'form': form,
@@ -302,7 +302,7 @@ class CheckoutView(View):
                 if payment_option == 'S':
                     return redirect('core:payment', payment_option='stripe')
                 elif payment_option == 'P':
-                    return redirect('core:payment', payment_option='paypal')
+                    return redirect('core:payment', payment_option='stripe')
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
@@ -467,7 +467,6 @@ class HomeView(ListView):
     model = Item
     paginate_by = 10
     template_name = "home.html"
-
 
 
 class TermsView(ListView):

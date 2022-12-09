@@ -5,7 +5,7 @@ from django_countries.widgets import CountrySelectWidget
 
 PAYMENT_CHOICES = (
     ('S', 'Stripe'),
-    ('P', 'PayPal')
+    ('P', 'Credit Card')
 )
 
 DELIVERY_CHOICES = (
@@ -40,7 +40,7 @@ class CheckoutForm(forms.Form):
     use_default_billing = forms.BooleanField(required=False)
 
     payment_option = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=PAYMENT_CHOICES)
+        widget=forms.RadioSelect(attrs={'disabled': 'disabled'}), choices=PAYMENT_CHOICES)
 
     delivery_option = forms.ChoiceField(
         widget=forms.RadioSelect, choices=DELIVERY_CHOICES)

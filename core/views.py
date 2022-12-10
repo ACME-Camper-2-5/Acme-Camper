@@ -277,14 +277,23 @@ class CheckoutView(View):
                     billing_zip = form.cleaned_data.get('billing_zip')
 
                     if is_valid_form([billing_address1, billing_country, billing_zip]):
-                        billing_address = Address(
-                            user=self.request.user,
-                            street_address=billing_address1,
-                            apartment_address=billing_address2,
-                            country=billing_country,
-                            zip=billing_zip,
-                            address_type='B'
-                        )
+                        if (self.request.user.is_authenticated):
+                            billing_address = Address(
+                                user=self.request.user,
+                                street_address=billing_address1,
+                                apartment_address=billing_address2,
+                                country=billing_country,
+                                zip=billing_zip,
+                                address_type='B'
+                            )
+                        else:
+                            billing_address = Address(
+                                street_address=billing_address1,
+                                apartment_address=billing_address2,
+                                country=billing_country,
+                                zip=billing_zip,
+                                address_type='B'
+                            )
                         billing_address.save()
 
                         order.billing_address = billing_address

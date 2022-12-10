@@ -76,7 +76,6 @@
             <span class="clearfix d-none d-sm-inline-block"> Terms of Service </span>
           </a>
         </li>
-        {% if request.user.is_authenticated %}
 
         <li class="nav-item">
           <a href="{% url 'core:order-summary' %}" class="nav-link">
@@ -85,6 +84,7 @@
             <span class="clearfix d-none d-sm-inline-block"> Cart </span>
           </a>
         </li>
+
         <form class="form-inline" action="/order-tracking" method="get">
           <li class="nav-item">
             <a class="btn-default nav-link waves-effect grey" href="{% url 'core:order-tracking' %}">
@@ -92,7 +92,6 @@
             </a>
           </li>
         </form>
-        {% endif %}
 
         {% if request.user.is_authenticated %}
         <li class="nav-item">
@@ -102,14 +101,6 @@
         </li>
 
         {% else %}
-
-        <form class="form-inline" action="/order-tracking" method="get">
-          <li class="nav-item">
-            <a class="btn-default nav-link waves-effect grey" href="{% url 'core:order-tracking' %}">
-              <span class="clearfix d-none d-sm-inline-block"> Track my Order </span>
-            </a>
-          </li>
-        </form>
 
         <li class="nav-item">
           <a class="btn-default nav-link waves-effect grey" href="{% url 'account_login' %}">

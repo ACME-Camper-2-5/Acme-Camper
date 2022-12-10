@@ -1,0 +1,8 @@
+1) Correr el siguiente comando para crear la imagen:
+
+docker build -t acme-camper .
+
+
+2) Ejecutar el contenedor a partir de la imagen creada
+
+docker run -p 8000:8000 acme-camper

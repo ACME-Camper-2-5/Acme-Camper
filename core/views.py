@@ -480,7 +480,7 @@ class PrivacyPolicyView(ListView):
     template_name = "privacy_policy.html"
 
 
-class OrderSummaryView(LoginRequiredMixin, View):
+class OrderSummaryView(View):
     def get(self, *args, **kwargs):
         try:
             if (self.request.user.is_authenticated):

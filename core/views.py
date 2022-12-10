@@ -204,14 +204,24 @@ class CheckoutView(View):
                     shipping_zip = form.cleaned_data.get('shipping_zip')
 
                     if is_valid_form([shipping_address1, shipping_country, shipping_zip]):
-                        shipping_address = Address(
-                            user=self.request.user,
-                            street_address=shipping_address1,
-                            apartment_address=shipping_address2,
-                            country=shipping_country,
-                            zip=shipping_zip,
-                            address_type='S'
-                        )
+                        if (self.request.user.is_authenticated):
+                            shipping_address = Address(
+                                user=self.request.user,
+                                street_address=shipping_address1,
+                                apartment_address=shipping_address2,
+                                country=shipping_country,
+                                zip=shipping_zip,
+                                address_type='S'
+                            )
+                        else:
+                            shipping_address = Address(
+                                street_address=shipping_address1,
+                                apartment_address=shipping_address2,
+                                country=shipping_country,
+                                zip=shipping_zip,
+                                address_type='S'
+                            )
+
                         shipping_address.save()
 
                         order.shipping_address = shipping_address
@@ -267,14 +277,23 @@ class CheckoutView(View):
                     billing_zip = form.cleaned_data.get('billing_zip')
 
                     if is_valid_form([billing_address1, billing_country, billing_zip]):
-                        billing_address = Address(
-                            user=self.request.user,
-                            street_address=billing_address1,
-                            apartment_address=billing_address2,
-                            country=billing_country,
-                            zip=billing_zip,
-                            address_type='B'
-                        )
+                        if (self.request.user.is_authenticated):
+                            billing_address = Address(
+                                user=self.request.user,
+                                street_address=billing_address1,
+                                apartment_address=billing_address2,
+                                country=billing_country,
+                                zip=billing_zip,
+                                address_type='B'
+                            )
+                        else:
+                            billing_address = Address(
+                                street_address=billing_address1,
+                                apartment_address=billing_address2,
+                                country=billing_country,
+                                zip=billing_zip,
+                                address_type='B'
+                            )
                         billing_address.save()
 
                         order.billing_address = billing_address
@@ -348,17 +367,17 @@ class PaymentView(View):
     def post(self, *args, **kwargs):
         if (self.request.user.is_authenticated):
             order = Order.objects.get(user=self.request.user, ordered=False)
+            userprofile = UserProfile.objects.get(user=self.request.user)
         else:
             order = Order.objects.get(anonymous=True, ordered=False)
         form = PaymentForm(self.request.POST)
-        userprofile = UserProfile.objects.get(user=self.request.user)
         if form.is_valid():
             token = form.cleaned_data.get('stripeToken')
             save = form.cleaned_data.get('save')
             use_default = form.cleaned_data.get('use_default')
 
             if save:
-                if userprofile.stripe_customer_id != '' and userprofile.stripe_customer_id is not None:
+                if self.request.user.is_authenticated and userprofile.stripe_customer_id != '' and userprofile.stripe_customer_id is not None:
                     customer = stripe.Customer.retrieve(
                         userprofile.stripe_customer_id)
                     customer.sources.create(source=token)
@@ -394,7 +413,8 @@ class PaymentView(View):
                 # create the payment
                 payment = Payment()
                 payment.stripe_charge_id = charge['id']
-                payment.user = self.request.user
+                if (self.request.user.is_authenticated):
+                    payment.user = self.request.user
                 payment.amount = order.get_total()
                 payment.save()
 

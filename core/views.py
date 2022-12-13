@@ -610,10 +610,16 @@ def remove_from_cart(request, slug):
 
 def remove_single_item_from_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
-    order_qs = Order.objects.filter(
-        user=request.user,
-        ordered=False
-    )
+    if request.user.is_authenticated:
+        order_qs = Order.objects.filter(
+            user=request.user,
+            ordered=False
+        )
+    else:
+        order_qs = Order.objects.filter(
+            anonymous=True,
+            ordered=False
+        )
     if order_qs.exists():
         order = order_qs[0]
         # check if the order item is in the order

@@ -74,7 +74,7 @@ class SearchResult(ListView):
 
 class CategoryAll(ListView):
     model = Item
-    paginate_by = 10
+    paginate_by = 12
     template_name = "home.html"
 
 
@@ -485,7 +485,7 @@ class PaymentView(View):
 
 class HomeView(ListView):
     model = Item
-    paginate_by = 10
+    paginate_by = 12
     template_name = "home.html"
 
 
@@ -496,7 +496,6 @@ class TermsView(ListView):
 
 class PrivacyPolicyView(ListView):
     model = Item
-    paginate_by = 10
     template_name = "privacy_policy.html"
 
 
